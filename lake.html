@@ -227,6 +227,7 @@ select option { background: #0c1419; }
   <p id="xWhy"></p>
   <dl id="xFacts">
     <div><dt>The dog</dt><dd id="xDog"></dd></div>
+    <div><dt>Search</dt><dd id="xPlan"></dd></div>
     <div class="wide"><dt>Rising</dt><dd id="xRise"></dd></div>
     <div><dt>Surface</dt><dd id="xSurf"></dd></div>
     <div><dt>Air</dt><dd id="xAir"></dd></div>
@@ -237,7 +238,7 @@ select option { background: #0c1419; }
 
 <aside id="panel" class="glass" aria-label="Conditions">
   <header>
-    <div class="mark"><b>Trailcraft</b><i>Scent lake &middot; water search</i><span class="sitenav"><a href="./">All demos</a><a href="field.html?v=bb5d1b5c">The field</a></span></div>
+    <div class="mark"><b>Trailcraft</b><i>Scent lake &middot; water search</i><span class="sitenav"><a href="./">All demos</a><a href="field.html?v=c12ddf08">The field</a></span></div>
     <div class="seg" id="units" role="group" aria-label="Units">
       <button type="button" data-u="metric" aria-pressed="true">&deg;C &middot; m</button><button type="button" data-u="us" aria-pressed="false">&deg;F &middot; ft</button>
     </div>
@@ -310,6 +311,8 @@ select option { background: #0c1419; }
           <g id="roseArrow"><path d="M0 12 V-11 M-4.5 -6 L0 -12 L4.5 -6" stroke="#74c7f6" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
         </svg>
       </div>
+      <div class="ctl"><div class="row"><label for="sGust">Gusts and swings</label><output id="oGust"></output></div>
+        <input type="range" id="sGust" min="0" max="150" step="5" value="100"></div>
       <div class="ctl"><div class="row"><label for="sHour">Time of day</label><output id="oHour"></output></div>
         <input type="range" id="sHour" min="0" max="24" step="0.25" value="14.5"></div>
     </section>
@@ -318,6 +321,10 @@ select option { background: #0c1419; }
       <span class="eyebrow">The source: human remains</span>
       <div class="stages" id="stage4" role="group" aria-label="Where the source is"></div>
       <p class="note" id="stageNote"></p>
+      <div class="ctl"><div class="row"><label for="sDays">Days in the water</label><output id="oDays"></output></div>
+        <input type="range" id="sDays" min="0" max="60" step="0.5" value="3"></div>
+      <label class="toggle"><input type="checkbox" id="lAuto"> Let the days pick the stage</label>
+      <p class="note" id="daysNote"></p>
       <p class="note">Drag the ring on the water to move the source. It is drawn as a marker, not a body.</p>
     </section>
 
@@ -325,6 +332,8 @@ select option { background: #0c1419; }
       <span class="eyebrow">The boat and the dog</span>
       <button type="button" class="chip wide" id="runSearch">Run the search again</button>
       <p class="note">Double-click (or double-tap) the water to send the boat there yourself.</p>
+      <div class="ctl"><div class="row"><label for="sNose">Dog&rsquo;s nose above the water</label><output id="oNose"></output></div>
+        <input type="range" id="sNose" min="0.2" max="1.5" step="0.05" value="0.4"></div>
       <div class="headrow"><span class="eyebrow">Scent drawn as</span>
         <div class="seg" id="style" role="group" aria-label="How the scent is drawn">
           <button type="button" data-y="glow" aria-pressed="true">Glow</button><button type="button" data-y="smoke">Smoke</button>
@@ -357,6 +366,7 @@ select option { background: #0c1419; }
       </ul></div>
     <div><h3 style="color:var(--wind)">Published rules and ranges, simplified</h3>
       <ul>
+        <li>How much the wind swings. Its direction wanders more in unsettled air than in settled air; the size of the swing for each kind of air is the standard table used in air-quality work (US EPA monitoring guidance, EPA-454/R-99-005), laid against this page&rsquo;s five classes. &ldquo;Gusts and swings&rdquo; scales it from none to one and a half times.</li>
         <li>A surface film moves at about 3% of the wind speed, added to the water&rsquo;s own current. That is NOAA&rsquo;s rule of thumb for oil; reported values run from 0.8% to 5.8%.</li>
         <li>How much a lake stirs itself top to bottom. Published ranges (W&uuml;est &amp; Lorke 2009): the surface layer mixes a thousand to a million times faster than the thermocline. One value is picked inside each range, and the surface value rises with the wind. This is what makes dissolved scent stay under a thermocline.</li>
         <li>The current is full at the surface and falls to nothing at the bed, along the usual curve for flow in an open channel. Real lake currents are often layered and can reverse with depth.</li>
@@ -372,6 +382,9 @@ select option { background: #0c1419; }
         <li>How much gas, fat and dissolved scent the source gives off at each stage, and the three droplet sizes drawn (2 mm, 0.4 mm, 0.1 mm). Nobody has measured these for remains.</li>
         <li>&ldquo;Cold slows decay&rdquo; is drawn as output halving for every 10 &deg;C colder. That is a common rule for biological rates, not a measurement of remains. No published rule for when a body refloats could be confirmed.</li>
         <li>How long a patch of film keeps giving off scent (about 10 minutes in a light breeze, less when it is warm or windy).</li>
+        <li>&ldquo;Days in the water&rdquo; is a rule of thumb. Decay is counted in degree-days (days times the water temperature at the body). Two studies of bodies recovered from rivers put resurfacing at about 100 to 170 degree-days (Mateus &amp; Vieira 2014, six cases; Delhez et al. 2026, a preprint, fifty cases), so 100 is used here at the surface&rsquo;s pressure. Two things are added that those studies do not give: the need is scaled up with the pressure at depth (the same gas takes less room), and the time afloat is set at about 220 degree-days, for which no source was found. Use it to see the direction (colder and deeper means later, or never), not the day.</li>
+        <li>The &ldquo;Search&rdquo; figures (how high the scent sits, how far it carries at the dog&rsquo;s nose, how wide it is) are counted from the parcels in this picture every second or so. They are this model&rsquo;s answer, not a field measurement.</li>
+        <li>Gust strength is taken as 10% of the wind speed over open water, a chosen figure inside the range reported offshore, and the swings follow a smooth made-up rhythm, not a recorded wind.</li>
         <li>The boat&rsquo;s search is a simple script: sweep across the wind, turn into the scent when the dog&rsquo;s nose meets enough of it, follow the stronger side, stop where it runs out. Real dogs and handlers do far more. The only field figures found are handler reports that dogs can place a body to within about a metre in water up to about 15 m deep, and that a high-sided boat keeps the dog from the water.</li>
         <li>Time runs 12 times faster than real, or you would wait minutes for a droplet to rise. The boat is drawn at walking pace so it can be followed.</li>
         <li>Scent is invisible. Under water it is drawn as white bubbles, amber droplets and a pale haze. In the air it is drawn as glowing light, brighter where there is more of it; &ldquo;Smoke&rdquo; draws it as pale smoke instead. The film is drawn stronger than you would see it.</li>
@@ -701,6 +714,20 @@ const BARRIER = {
   trees: { alpha: 2.8, settle: 1.5, recover: 4, reach: 2.5 },
 };
 /* The log wind profile the shader uses, for the text. */
+/* How unsteady the wind is. Its direction swings more in unsettled air than in settled air: these are the usual
+   standard deviations of wind direction, in degrees, for each kind of air (the sigma-theta stability classes, US EPA
+   meteorological monitoring guidance EPA-454/R-99-005, table 6-9a: A 25, B 20, D 10, E 5, F 2.5), set against this
+   page's own five classes. Its speed gusts by a share of the mean. */
+const SWING_DEG = [25, 20, 10, 5, 2.5];                       // lifting hard, rising, neutral, stable, inversion
+function swingAt(dT) {
+  if (dT >= CLASS_X[0]) return SWING_DEG[0];
+  if (dT <= CLASS_X[4]) return SWING_DEG[4];
+  for (let i = 0; i < 4; i++) if (dT <= CLASS_X[i] && dT >= CLASS_X[i + 1]) return SWING_DEG[i] + (SWING_DEG[i + 1] - SWING_DEG[i]) * (CLASS_X[i] - dT) / (CLASS_X[i] - CLASS_X[i + 1]);
+  return SWING_DEG[2];
+}
+const GUST_SHARE = PLACE ? 0.10 : 0.18;                        // CHOSEN: gusts as a share of the mean speed, smoother over water than land (a measured gust factor of 1.4 over grassland fits 0.18)
+/* a slow, never-repeating wobble between about -1.6 and 1.6, for the swing and the gusts (t in seconds) */
+const wobble = (t, a, b, c) => (Math.sin(t / a) + Math.sin(t / b + 1.7) + Math.sin(t / c + 4.1)) / 1.2247;
 const profAt = (h) => Math.min(1.25, Math.max(0.04, Math.log(Math.max(h, SURF.floor) / SURF.z0) / Math.log(10 / SURF.z0)));
 /* Froude number of air meeting a barrier of height h: Fr = U / (N h). Below 1, only the
    air above h (1 - Fr) can climb over; the rest goes round (Sheppard 1956). N is worked out
@@ -1118,6 +1145,7 @@ uniform float uSink;          // 1/s over cold ground
 uniform float uMode;          // 0 scent, 1 wind
 uniform float uSeed;
 uniform float uInit;
+uniform float uSrcH;         // how high above the ground the source sits, m
 ${GLSL_NOISE}
 ${GLSL_AIR}
 void main(){
@@ -1152,7 +1180,7 @@ void main(){
   ph += uDt / (uAir * (0.55 + 0.9 * r.y));
   if (uInit > 0.5 || ph >= 1.0 || p.x < -4.0 || p.x > EXT + 4.0 || p.z < -4.0 || p.z > EXT + 4.0) {
     float a = hash12(vUv * 53.9 + uSeed) * 6.2832, rr = sqrt(hash12(vUv * 29.3 + uSeed * 1.9 + 0.3)) * e.w;
-    p = vec3(e.x + cos(a) * rr, 0.04 + 0.3 * hash12(vUv * 71.3 + uSeed * 0.6), e.y + sin(a) * rr);
+    p = vec3(e.x + cos(a) * rr, uSrcH + 0.04 + 0.3 * hash12(vUv * 71.3 + uSeed * 0.6), e.y + sin(a) * rr);
     ph = uInit > 0.5 ? r.z : fract(ph) * 0.02;       // first step: start mid-life so the stream is already steady
   } else {
     float sh;
@@ -1188,6 +1216,7 @@ const SCENT_VERT = /* glsl */`
 attribute vec2 ref;
 uniform sampler2D uPos, uRand, uEmit, uTerr;
 uniform float uSession, uLife, uGain, uPx, uMix, uSize, uCap;
+uniform float uSet, uAirLife;   // seconds since the source was put down; seconds a parcel lives
 varying vec3 vAcc;
 const float EXT = ${EXTENT.toFixed(1)};
 void main(){
@@ -1209,6 +1238,7 @@ void main(){
   gl_PointSize = pxc;
   /* Each parcel carries a fixed amount of scent: spread over a bigger disc it is thinner. */
   float a = str * fade * uGain * min((px * px) / (pxc * pxc), 1.0) / pow(size, 1.3);
+  a *= 1.0 - smoothstep(uSet * 0.9, uSet, ph * uAirLife * (0.55 + 0.9 * r.y));        // scent older than the source itself cannot be there yet
   vAcc = vec3(a, a * (1.0 - ph), a * smoothstep(3.0, 20.0, s.y));
   if (a < 1e-6) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
 }
@@ -1755,11 +1785,13 @@ function createWorld(canvas, opts = {}) {
 
   const world = {
     THREE, renderer, scene, camera, N,
-    cond: { wind: 3, from: 315, airT: 13.4, groundT: 13.4, humidity: 78, rain: 0, hour: 9.5, cloud: 0.35 },
+    cond: { wind: 3, from: 315, airT: 13.4, groundT: 13.4, humidity: 78, rain: 0, hour: 9.5, cloud: 0.35, gust: 0 },      // gust: 0 steady, 1 as unsteady as is usual for the air
     session: 0,                 // minutes on the session clock
     simSpeed: 12,               // model seconds per real second
     reach: 1.0,                 // 1 = parcels live exactly as long as the app's AIRBORNE says
     gain: 1, vapourGain: 1,
+    srcHeight: 0,               // metres above the ground the source sits
+    setTime: 1e9,               // seconds since the source was put down (huge = long settled)
     layers: { wind: true, stain: true, scent: true, lines: true },
     scentStyle: 'smoke',        // 'smoke' = pale, lit by the sun and sky; 'glow' = the orange light of the first version
     paused: false,
@@ -2002,7 +2034,7 @@ function createWorld(canvas, opts = {}) {
       uniforms: { uPos: { value: sim.cur }, uRand: { value: sim.rand }, uEmit: U.uEmit, uTerr: U.uTerr,
         uWind: U.uWind, uDT: U.uDT, uDrain: U.uDrain, uCreep: U.uCreep, uObsA: U.uObsA, uObsB: U.uObsB, uObsC: U.uObsC,
         uDt: { value: 0 }, uT: U.uT, uSession: U.uSession, uAir: { value: AIRBORNE }, uTurb: { value: 0.2 },
-        uLift: { value: 0 }, uSink: { value: 0 }, uMode: { value: mode }, uSeed: { value: 0 }, uInit: { value: 0 } },
+        uLift: { value: 0 }, uSink: { value: 0 }, uMode: { value: mode }, uSeed: { value: 0 }, uInit: { value: 0 }, uSrcH: { value: 0 } },
     });
     sim.scene = new THREE.Scene();
     const mesh = new THREE.Mesh(quadGeo, sim.mat); mesh.frustumCulled = false; sim.scene.add(mesh);
@@ -2042,7 +2074,7 @@ function createWorld(canvas, opts = {}) {
   const scentGeo = refGeo(N, 1);
   const scentMat = new THREE.ShaderMaterial({ vertexShader: SCENT_VERT, fragmentShader: SCENT_FRAG, ...additive,
     uniforms: { uPos: scentSim.posU, uRand: { value: scentSim.rand }, uEmit: U.uEmit, uTerr: U.uTerr, uSession: U.uSession,
-      uLife: U.uLife, uGain: { value: 1 }, uPx: { value: 800 }, uMix: U.uMix, uSize: { value: 0.9 }, uCap: { value: 22 } } });
+      uLife: U.uLife, uGain: { value: 1 }, uPx: { value: 800 }, uMix: U.uMix, uSize: { value: 0.9 }, uCap: { value: 22 }, uSet: { value: 1e9 }, uAirLife: { value: AIRBORNE } } });
   const scentPts = new THREE.Points(scentGeo, scentMat);
   scentPts.frustumCulled = false;
   /* Scent is drawn at half size into its own picture, behind the real ground and trees. */
@@ -2143,6 +2175,57 @@ function createWorld(canvas, opts = {}) {
   };
   world.setPoint(HALF, HALF);
   world.emit = { data: emitData, tex: emitTex, n: EMIT_W };              // a page may fill the sources itself: x, z, -1e5, radius for each
+
+  /* ── measuring the plume ─────────────────────────────────────────────
+     How high the scent sits, how far it carries at nose height, and how wide it is there, counted from the
+     parcels themselves on the graphics card. Parcels are sorted by distance from the source into rings; each
+     ring adds up its parcels' weight, height and position. */
+  const STAT_BINS = 48, statOut = new Float32Array(STAT_BINS * 2 * 4);
+  const statRT = new THREE.WebGLRenderTarget(STAT_BINS, 2, { type: THREE.FloatType, format: THREE.RGBAFormat, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: false });
+  const statGeo = new THREE.BufferGeometry();
+  { const ref = []; for (let j = 0; j < Math.floor(N * 0.4); j += 2) for (let i = 0; i < N; i += 2) ref.push((i + 0.5) / N, (j + 0.5) / N);      // parcels that are always in use, one in four of them
+    statGeo.setAttribute('ref', new THREE.BufferAttribute(new Float32Array(ref), 2)); statGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(ref.length / 2 * 3), 3)); }
+  const statMat = new THREE.ShaderMaterial({ ...additive, depthTest: false,
+    uniforms: { uPos: scentSim.posU, uRand: { value: scentSim.rand }, uCentre: { value: new THREE.Vector2() }, uBin: { value: 4 }, uNose: { value: 1 }, uRow: { value: 0 },
+      uSet: scentMat.uniforms.uSet, uAirLife: scentMat.uniforms.uAirLife },
+    vertexShader: `attribute vec2 ref; uniform sampler2D uPos, uRand; uniform vec2 uCentre; uniform float uBin, uNose, uRow, uSet, uAirLife; varying vec4 vV;
+void main(){
+  vec4 s = texture2D(uPos, ref), r = texture2D(uRand, ref);
+  vec2 d = s.xz - uCentre; float bin = floor(length(d) / uBin);
+  float w = (1.0 - s.w) * step(s.w * uAirLife * (0.55 + 0.9 * r.y), uSet), low = w * step(s.y, uNose);
+  vV = uRow < 0.5 ? vec4(w, w * s.y, w * s.y * s.y, low) : vec4(low * d.x, low * d.y, low * dot(d, d), low);
+  gl_PointSize = 1.0;
+  gl_Position = (bin < ${STAT_BINS}.0 && w > 0.0) ? vec4((bin + 0.5) / ${STAT_BINS / 2}.0 - 1.0, uRow < 0.5 ? -0.5 : 0.5, 0.0, 1.0) : vec4(2.0, 2.0, 2.0, 1.0);
+}`,
+    fragmentShader: `precision highp float; varying vec4 vV; void main(){ gl_FragColor = vV; }` });
+  const statPts = new THREE.Points(statGeo, statMat); statPts.frustumCulled = false;
+  const statScene = new THREE.Scene(); statScene.add(statPts);
+  /* Returns { top, share, reach, first, width, at } in metres (share 0..1), or null when there is too little scent to measure.
+     top: most of the scent is below this height. share: how much of it is below `nose`. reach: nine tenths of the nose-level
+     scent lies within this distance. first: where nose-level scent begins. width: how wide nine tenths of it is, `at` metres out. */
+  world.plumeStats = (cx, cz, { nose = 1, bin = 4 } = {}) => {
+    const u = statMat.uniforms; u.uCentre.value.set(cx, cz); u.uBin.value = bin; u.uNose.value = nose;
+    renderer.setRenderTarget(statRT); renderer.setClearColor(0x000000, 0); renderer.clear();
+    renderer.autoClear = false; u.uRow.value = 0; renderer.render(statScene, quadCam); u.uRow.value = 1; renderer.render(statScene, quadCam); renderer.autoClear = true;
+    renderer.readRenderTargetPixels(statRT, 0, 0, STAT_BINS, 2, statOut);
+    renderer.setRenderTarget(null); renderer.setClearColor(0x000000, 1);
+    let W = 0, WH = 0, WH2 = 0, WL = 0;
+    for (let i = 0; i < STAT_BINS; i++) { W += statOut[i * 4]; WH += statOut[i * 4 + 1]; WH2 += statOut[i * 4 + 2]; WL += statOut[i * 4 + 3]; }
+    if (W < 40 || WL < 8) return W < 40 ? null : { top: WH / W + 1.3 * Math.sqrt(Math.max(0, WH2 / W - (WH / W) ** 2)), share: WL / W, reach: 0, first: 0, width: 0, at: 0 };
+    const mean = WH / W, top = mean + 1.3 * Math.sqrt(Math.max(0, WH2 / W - mean * mean)), o = STAT_BINS * 4;
+    let cum = 0, reach = STAT_BINS * bin, first = -1;
+    for (let i = 0; i < STAT_BINS; i++) { cum += statOut[o + i * 4 + 3]; if (first < 0 && cum >= 0.05 * WL) first = i * bin; if (cum >= 0.9 * WL) { reach = (i + 1) * bin; break; } }
+    const k = Math.max(1, Math.min(STAT_BINS - 2, Math.round(0.6 * reach / bin)));
+    /* width: in each of three rings round that distance, how far the parcels lie from the ring's own middle, less the ring's own depth */
+    let sw = 0, sv = 0;
+    for (let i = k - 1; i <= k + 1; i++) {
+      const a = statOut[o + i * 4 + 3]; if (a < 0.5) continue;
+      const mx = statOut[o + i * 4] / a, mz = statOut[o + i * 4 + 1] / a;
+      sv += a * Math.max(0, statOut[o + i * 4 + 2] / a - mx * mx - mz * mz - bin * bin / 12); sw += a;
+    }
+    const sig = sw > 1 ? Math.sqrt(sv / sw) : 0;
+    return { top, share: WL / W, reach, first: Math.max(0, first), width: 3.3 * sig, at: k * bin };
+  };
 
   /* ── glow and grade ──────────────────────────────────────────────── */
   const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: +(q.get('aa') || 0) }));
@@ -2273,11 +2356,16 @@ function createWorld(canvas, opts = {}) {
   function applyConditions() {
     const c = world.cond, st = stability(c.groundT, c.airT);
     world.st = st; world.life = scentLife(c, st); world.regime = regime(c, st);
-    const s = synoptic(c.wind, c.from);
+    /* the wind of this moment: the steady wind, plus its swings and gusts */
+    let windNow = c.wind, fromNow = c.from;
+    if (c.gust > 0) { const t = U.uT.value; windNow = c.wind * Math.max(0.15, 1 + c.gust * GUST_SHARE * wobble(t, 1.3, 3.1, 7.7)); fromNow = c.from + c.gust * swingAt(st.dT) * wobble(t + 50, 5, 13, 29); }
+    world.windNow = { speed: windNow, from: fromNow };
+    const s = synoptic(windNow, fromNow);
     U.uWind.value.set(s.u, s.v); U.uDT.value = st.dT; U.uDrain.value = st.drain; U.uCreep.value = st.creep; U.uMix.value = st.mix;
     U.uLife.value = world.life; U.uSession.value = world.session;
     const su = scentSim.mat.uniforms;
     su.uAir.value = AIRBORNE * world.reach / st.mix;
+    su.uSrcH.value = world.srcHeight; scentMat.uniforms.uAirLife.value = su.uAir.value; scentMat.uniforms.uSet.value = world.setTime;
     su.uTurb.value = Math.max(0.07, (0.05 + 0.045 * c.wind) * st.mix);
     su.uLift.value = st.dT > 0 ? 0.07 * Math.min(st.dT, 9) : 0;
     su.uSink.value = 0.012 + (st.dT < 0 ? Math.min(0.22, 0.03 * -st.dT) : 0);
@@ -2495,6 +2583,23 @@ const STAGES = [
   { id: 'sunk', name: 'Sunk again', at: 'bed', gas: 0.12, oil: 0.6, dis: 1.0, direct: 0 },
 ];
 
+/* How many days until a body lifts off the bed, and how long it then floats. A RULE OF THUMB.
+   Decay is counted in degree-days (days times the water temperature in deg C at the body), as forensic work does.
+   PUBLISHED for shallow river cases: bodies resurfaced at about 97 degree-days (95% range 46-147; Delhez et al. 2026,
+   preprint, 50 cases) and 115-174 (Mateus & Vieira 2014, six cases). `lift` is set at 100 at the surface's pressure.
+   ADDED HERE, not published: at depth the same gas takes less room (Boyle's law), so the need grows with pressure.
+   CHOSEN, no source found: the short hold at the thermocline, and how long a body stays afloat. */
+const REFLOAT = { lift: 100, hang: 12, afloat: 220 };           // degree-days: to lift off (at the surface's pressure), held at the thermocline, afloat
+/* The stage after `days`, with the day each change comes. c and col as for lakeColumn. */
+function stageAfter(days, c, col) {
+  const D = c.depth, needLift = REFLOAT.lift * (1 + D / WATER.atmPer), tBed = Math.max(0.2, col.tempAt(D));
+  const liftDay = needLift / tBed;
+  const hangDay = col.clineHere ? liftDay + REFLOAT.hang / Math.max(0.2, col.tempAt(c.cline)) : liftDay;
+  const sinkDay = hangDay + REFLOAT.afloat / Math.max(0.2, col.tempAt(0));
+  const id = days < liftDay ? 'bottom' : days < hangDay ? 'cline' : days < sinkDay ? 'surface' : 'sunk';
+  return { id, liftDay, hangDay, sinkDay };
+}
+
 /* Everything about the water column at one spot. c = { depth, surfT, deepT, cline, wind, cur } */
 function lakeColumn(c) {
   const dRho = rhoWater(c.deepT) - rhoWater(c.surfT);           // + means the deep water is heavier: layers hold
@@ -2680,7 +2785,7 @@ const PRESETS = [
   { id: 'flow', name: 'Moving water', hour: 16, depth: 6, surfT: 16, deepT: 15, cline: 4, airT: 17, wind: 1.5, from: 200, cur: 25, curTo: 80, cloud: 0.5, stage: 'sunk' },
 ];
 /* cur is in cm/s here, as on the slider. */
-const S = { units: 'metric', ...PRESETS[0], preset: 'summer', tour: true, view: 'shore', labels: true, film: true, style: 'glow',
+const S = { units: 'metric', ...PRESETS[0], preset: 'summer', tour: true, view: 'shore', labels: true, film: true, style: 'glow', gust: 100, noseH: 0.4, days: 3, auto: false,      // gust: % of the usual; noseH: the dog's nose above the water, m; auto: let the days pick the stage
   src: [0.47 * EXTENT, 0.50 * EXTENT] };
 
 /* ── the world ───────────────────────────────────────────────────── */
@@ -2715,7 +2820,9 @@ let ENV = null, settleAt = 0, surf = { x: S.src[0], z: S.src[1], mx: S.src[0], m
 function syncModel(resettle = true) {
   const D = Math.max(0.5, -landAt(S.src[0], S.src[1]));
   const c = { depth: D, surfT: S.surfT, deepT: S.deepT, cline: S.cline, wind: S.wind, from: S.from, cur: S.cur / 100, curTo: S.curTo, airT: S.airT };
-  const col = lakeColumn(c), stage = STAGES.find(s => s.id === S.stage);
+  const col = lakeColumn(c);
+  if (S.auto) S.stage = stageAfter(S.days, c, col).id;
+  const stage = STAGES.find(s => s.id === S.stage);
   const zs = stage.at === 'top' ? 0.25 : stage.at === 'cline' ? (col.clineHere ? S.cline : D * 0.5) : D - 0.2;
   const Tsrc = col.tempAt(zs);
   const q = Math.min(1.6, Math.max(0.12, Math.pow(2, (Tsrc - 20) / 10)));            // CHOSEN: output halves for every 10 C colder
@@ -3000,7 +3107,7 @@ const boatObj = new THREE.Group();
   scene.add(boatObj);
 }
 const NOSE_AT = [2.1, 0.5];                                         // the dog's nose: metres ahead of the middle of the boat, metres above the water
-const boat = { x: 0, z: 0, hx: 1, hz: 0, mode: 'idle', way: [], wi: 0, nose: 0, lo: 0, hi: 0, left: 0, right: 0, peak: 0, peakAt: null, since: 0, hold: 0,
+const boat = { x: 0, z: 0, hx: 1, hz: 0, mode: 'idle', way: [], wi: 0, nose: 0, under: 0, left: 0, right: 0, peak: 0, peakAt: null, since: 0, hold: 0,
   first: null, alert: null, marks: [], lanes: 0, trip: 0, cast: 0, cand: null, candN: 0, line: [0, 0], phase: 1, axis: [1, 0], then: null };
 const T_IN = 5, T_STRONG = 16;                                      // CHOSEN: how much scent at the nose counts as interest, and as strong
 function startSearch() {
@@ -3079,7 +3186,8 @@ function boatStep(dt) {
 }
 
 /* ── the dog's nose: count the scent parcels within reach of it, on the graphics card ──
-   Four spots (the nose, a little to each side, and ahead), each in two layers: below half a metre, and up to 1.6 m. */
+   Four spots (the nose, a little to each side, and ahead), each in two layers: a band half a metre deep around
+   the height of the nose, and whatever passes under that band. */
 const probeRT = new THREE.WebGLRenderTarget(4, 2, { type: THREE.FloatType, format: THREE.RGBAFormat, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: false });
 const probeGeo = new THREE.BufferGeometry();
 {
@@ -3087,19 +3195,19 @@ const probeGeo = new THREE.BufferGeometry();
   for (let j = 0; j < rows; j += 2) for (let i = 0; i < N; i += 2) ref.push((i + 0.5) / N, (j + 0.5) / N);
   probeGeo.setAttribute('ref', new THREE.BufferAttribute(new Float32Array(ref), 2)); probeGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(ref.length / 2 * 3), 3));
 }
-const probeMat = new THREE.ShaderMaterial({ ...ADD, depthTest: false, uniforms: { uPos: world.scentPos, uProbe: { value: [0, 1, 2, 3].map(() => new THREE.Vector2()) }, uR: { value: 2.2 } },
+const probeMat = new THREE.ShaderMaterial({ ...ADD, depthTest: false, uniforms: { uPos: world.scentPos, uProbe: { value: [0, 1, 2, 3].map(() => new THREE.Vector2()) }, uR: { value: 2.2 }, uNoseH: { value: 0.4 } },
   vertexShader: /* glsl */`
 attribute vec2 ref;
 uniform sampler2D uPos;
 uniform vec2 uProbe[4];
-uniform float uR;
+uniform float uR, uNoseH;
 varying float vV;
 void main(){
   vec4 s = texture2D(uPos, ref);
   gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 1.0; vV = 0.0;
-  if (s.y < 1.6) for (int i = 0; i < 4; i++) {
+  if (s.y < uNoseH + 0.28) for (int i = 0; i < 4; i++) {
     vec2 d = s.xz - uProbe[i];
-    if (dot(d, d) < uR * uR) { gl_Position = vec4((float(i) + 0.5) / 2.0 - 1.0, s.y < 0.5 ? -0.5 : 0.5, 0.0, 1.0); vV = 1.0 - s.w; }
+    if (dot(d, d) < uR * uR) { gl_Position = vec4((float(i) + 0.5) / 2.0 - 1.0, s.y >= uNoseH - 0.28 ? -0.5 : 0.5, 0.0, 1.0); vV = 1.0 - s.w; }
   }
 }`,
   fragmentShader: `precision highp float; varying float vV; void main(){ gl_FragColor = vec4(vV, 1.0, 0.0, 1.0); }` });
@@ -3109,11 +3217,12 @@ const probeOut = new Float32Array(32);
 function sniff() {
   const pr = probeMat.uniforms.uProbe.value, n = nosePoint(), l = nosePoint(NOSE_AT[0] - 0.4, -3.4), r = nosePoint(NOSE_AT[0] - 0.4, 3.4), f = nosePoint(NOSE_AT[0] + 4);
   pr[0].set(n[0], n[1]); pr[1].set(l[0], l[1]); pr[2].set(r[0], r[1]); pr[3].set(f[0], f[1]);
+  probeMat.uniforms.uNoseH.value = S.noseH;
   renderer.setRenderTarget(probeRT); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(probeScene, flatCam);
   renderer.readRenderTargetPixels(probeRT, 0, 0, 4, 2, probeOut);
   renderer.setRenderTarget(null); renderer.setClearColor(0x000000, 1);
-  const g = surf.gain, at = (i) => (probeOut[i * 4] + probeOut[16 + i * 4]) * g;
-  boat.lo += (probeOut[0] * g - boat.lo) * 0.5; boat.hi += (probeOut[16] * g - boat.hi) * 0.5;
+  const g = surf.gain, at = (i) => probeOut[i * 4] * g;                // row 0: scent in a band half a metre deep around the nose
+  boat.under += (probeOut[16] * g - boat.under) * 0.5;                 // row 1: scent passing under that band
   boat.nose += (at(0) - boat.nose) * 0.5; boat.left += (at(1) - boat.left) * 0.5; boat.right += (at(2) - boat.right) * 0.5;
 }
 
@@ -3196,6 +3305,7 @@ const fmtHour = (h) => { const hh = Math.floor(h) % 24, mm = Math.round((h - Mat
 const fmtTime = (s) => s < 90 ? `${Math.max(1, Math.round(s))} s` : s < 5400 ? `${Math.round(s / 60)} min` : s < 172800 ? `${(s / 3600).toFixed(s < 36000 ? 1 : 0)} h` : s < 5184000 ? `${Math.round(s / 86400)} days` : 'months';
 const windWord = (w) => w < 0.5 ? 'calm' : w < 1.6 ? 'light air' : w < 3.4 ? 'light breeze' : w < 5.5 ? 'gentle breeze' : w < 8 ? 'moderate breeze' : w < 10.8 ? 'fresh breeze' : 'strong breeze';
 const bearingOf = (dx, dz) => (Math.atan2(dx, -dz) * 180 / Math.PI + 360) % 360;          // compass bearing of a move (east, south)
+const fmtH = (m) => us() ? `${(m * 3.281).toFixed(1)} ft` : `${m.toFixed(2).replace(/0$/, '')} m`;
 const tag = (k) => `<span class="tag ${k}">${k === 'measured' ? 'measured' : k === 'model' ? 'lecture slide' : k === 'rule' ? 'published rule, simplified' : 'illustrative'}</span>`;
 
 /* ── the explanation ─────────────────────────────────────────────── */
@@ -3273,12 +3383,27 @@ function explain() {
     if (d > 4 && !still) dog += ' The mark is where to start, not where to dive: search from it against the current.';
   } else if (boat.mode === 'done') dog = `Finished the sweeps without enough scent to work. ${surf.gain < 0.15 ? 'Very little is reaching the air.' : 'The scent passed outside the sweeps.'}`;
   else dog = `Where you sent it. Scent at the nose: ${noseWord}.`;
-  if (boat.nose >= T_IN && boat.lo > 1.6 * boat.hi) dog += ' Most of it is in the lowest half metre: the dog needs its nose at the water.';
+  if (boat.under > 2.5 * Math.max(boat.nose, 2)) dog += ` Most of the scent here is passing <b>under the dog’s nose</b>, which is ${fmtH(S.noseH)} above the water.`;
   dog += ` ${tag('illus')}`;
 
   const key = col.turning ? 'turning' : col.layered ? 'layered' : 'mixed';
   const word = col.turning ? 'the lake is turning over' : col.layered ? `thermocline ${fmtDepth(S.cline)} down` : 'one temperature, top to bottom';
   return { head, why, rise, src, sf, air, dog, key, word, st };
+}
+
+/* ── what to do with it: how high the scent sits, how far it carries at the dog's nose, how wide it is ── */
+function planText() {
+  const top = S.noseH + 0.28, low = Math.max(0, S.noseH - 0.28), p = world.plumeStats(surf.x, surf.z, { nose: top, bin: 4 });
+  if (!p || surf.gain < 0.03) return 'Too little scent in the air to measure.';
+  const q = low > 0.02 ? world.plumeStats(surf.x, surf.z, { nose: low, bin: 4 }) : null, under = q ? q.share : 0, level = Math.max(0, p.share - under);
+  let t = `Most of the scent is below <b>${fmtH(p.top)}</b>. <b>${Math.round(level * 100)}%</b> of it is level with the dog’s nose (${fmtH(S.noseH)} above the water)`;
+  t += under > 0.05 ? `, and ${Math.round(under * 100)}% passes under it. ` : '. ';
+  if (level < 0.1) t += 'At this height the dog gets almost none of it. A lower bow, or a dog that can get its head down to the water, changes that. ';
+  else if (p.reach > 0) {
+    t += `Low down it carries about <b>${fmtDist(p.reach)}</b> from where it comes up, and ${fmtDist(p.at)} out it is about <b>${fmtDist(Math.max(1, p.width))}</b> wide. `;
+    t += `So sweeps across the wind up to about ${fmtDist(p.reach * 0.8)} apart still meet it, but runs made with the wind need to be within ${fmtDist(Math.max(1, p.width))}. `;
+  }
+  return t + '<span class="tag illus">counted from this picture</span>';
 }
 
 /* ── the water column, drawn ─────────────────────────────────────── */
@@ -3322,9 +3447,15 @@ function render() {
   $('oCur').textContent = S.cur < 1 ? 'still' : fmtSlow(S.cur / 100); $('oCurTo').textContent = `${compassS(S.curTo)} · ${Math.round(S.curTo)}°`;
   $('oAir').textContent = fmtT(S.airT); $('oWind').textContent = `${fmtWind(S.wind)} · ${windWord(S.wind)}`; $('oFrom').textContent = `${compassS(S.from)} · ${Math.round(S.from)}°`;
   $('oHour').textContent = fmtHour(S.hour);
-  for (const [id, v] of [['sDepth', S.depth], ['sSurf', S.surfT], ['sDeep', S.deepT], ['sCline', S.cline], ['sCur', S.cur], ['sCurTo', S.curTo], ['sAir', S.airT], ['sWind', S.wind], ['sFrom', S.from], ['sHour', S.hour]]) if (document.activeElement !== $(id)) $(id).value = v;
+  $('oGust').textContent = S.gust < 5 ? 'steady' : `${S.gust < 60 ? 'light' : S.gust < 125 ? 'usual' : 'strong'} · swings ±${Math.round(S.gust / 100 * swingAt(S.surfT - S.airT))}°`;
+  $('oNose').textContent = fmtH(S.noseH);
+  { const sa = stageAfter(S.days, ENV.c, col), day = (d) => d > 60 ? 'not within two months' : `about day ${Math.max(1, Math.round(d))}`;
+    $('oDays').textContent = S.auto ? `day ${S.days % 1 ? S.days.toFixed(1) : S.days}` : 'not used';
+    $('lAuto').checked = S.auto; $('sDays').style.opacity = S.auto ? 1 : 0.45;
+    $('daysNote').innerHTML = `Here, ${fmtDepth(ENV.D)} deep with ${fmtT(col.tempAt(ENV.D), 0)} at the bed, it would lift off ${day(sa.liftDay)} and sink again ${day(sa.sinkDay)}. <span class="tag illus">rule of thumb</span>`; }
+  $('xPlan').innerHTML = planText();
+  for (const [id, v] of [['sDepth', S.depth], ['sSurf', S.surfT], ['sDeep', S.deepT], ['sCline', S.cline], ['sCur', S.cur], ['sCurTo', S.curTo], ['sAir', S.airT], ['sWind', S.wind], ['sFrom', S.from], ['sHour', S.hour], ['sGust', S.gust], ['sNose', S.noseH], ['sDays', S.days]]) if (document.activeElement !== $(id)) $(id).value = v;
   $('curArrow').setAttribute('transform', `rotate(${S.curTo})`); $('curArrow').style.opacity = S.cur < 1 ? 0.25 : 1;
-  $('roseArrow').setAttribute('transform', `rotate(${S.from + 180})`);
   const dT = S.surfT - S.airT;
   $('dtpin').style.left = `${clamp(50 + dT * 4.2, 1, 99)}%`;
   $('dtSay').textContent = dT < -1 ? `Water ${fmtDT(-dT)} colder than the air: scent stays low.` : dT > 1 ? `Water ${fmtDT(dT)} warmer than the air: scent lifts.` : 'Water and air about the same.';
@@ -3378,10 +3509,14 @@ function setPreset(id, fromTour) {
 }
 for (const p of PRESETS) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.dataset.p = p.id; b.textContent = p.name; b.addEventListener('click', () => setPreset(p.id)); $('presets').appendChild(b); }
 for (const s of STAGES) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.dataset.s = s.id; b.textContent = s.name;
-  b.addEventListener('click', () => { S.stage = s.id; S.preset = ''; stopTour(); syncModel(); model.settle(); settleAt = 0; placeSource(); startSearch(); render(); if (S.view === 'under') applyView(false); }); $('stage4').appendChild(b); }
+  b.addEventListener('click', () => { S.stage = s.id; S.auto = false; S.preset = ''; stopTour(); syncModel(); model.settle(); settleAt = 0; placeSource(); startSearch(); render(); if (S.view === 'under') applyView(false); }); $('stage4').appendChild(b); }
 const bind = (id, key, what) => $(id).addEventListener('input', e => { S[key] = +e.target.value; S.preset = ''; stopTour(); changed(what); });
 bind('sDepth', 'depth', 'depth'); bind('sSurf', 'surfT'); bind('sDeep', 'deepT'); bind('sCline', 'cline'); bind('sCur', 'cur', 'flow'); bind('sCurTo', 'curTo', 'flow');
-bind('sAir', 'airT'); bind('sWind', 'wind', 'flow'); bind('sFrom', 'from', 'flow'); bind('sHour', 'hour');
+bind('sAir', 'airT'); bind('sWind', 'wind', 'flow'); bind('sFrom', 'from', 'flow'); bind('sHour', 'hour'); bind('sGust', 'gust'); bind('sNose', 'noseH');
+$('sDays').addEventListener('input', e => { S.days = +e.target.value; S.auto = true; S.preset = ''; stopTour(); syncModel(); placeSource(); render(); if (S.view === 'under') applyView(false); });
+$('sDays').addEventListener('change', () => startSearch());
+$('lAuto').addEventListener('change', e => { S.auto = e.target.checked; stopTour(); syncModel(); placeSource(); startSearch(); render(); });
+$('sNose').addEventListener('change', () => startSearch());
 for (const id of ['sWind', 'sFrom', 'sCur', 'sCurTo', 'sDepth']) $(id).addEventListener('change', () => { startSearch(); });        // let go of the slider: the boat starts over for the new conditions
 $('tour').addEventListener('change', e => { S.tour = e.target.checked; tourClock = 0; });
 $('units').addEventListener('click', e => { const u = e.target.dataset.u; if (u) { S.units = u; render(); } });
@@ -3435,6 +3570,8 @@ function uiFrame(dt) {
   const c = world.cond, k = 1 - Math.exp(-dt * 3.2);
   c.airT = lerp(c.airT, S.airT, k); c.groundT = lerp(c.groundT, S.surfT, k); c.wind = lerp(c.wind, S.wind, k); c.from = angTo(c.from, S.from, k);
   c.hour = lerp(c.hour, S.hour, 1 - Math.exp(-dt * 1.6)); c.cloud = lerp(c.cloud, S.cloud, 1 - Math.exp(-dt * 1.2));
+  c.gust = S.gust / 100;
+  $('roseArrow').setAttribute('transform', `rotate(${(world.windNow ? world.windNow.from : S.from) + 180})`);      // the needle shows the wind of this moment
   if (S.view === 'boat') world.goal.target.set(boat.x - HALF, 1.0, boat.z - HALF);
   srcMark.children[4].scale.setScalar(1 + 0.1 * Math.sin(world.time * 2.2));
   /* the tour moves on a little after the dog alerts */
