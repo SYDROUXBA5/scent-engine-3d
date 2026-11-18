@@ -224,7 +224,7 @@ select option { background: #0c1419; }
 
 <aside id="panel" class="glass" aria-label="Conditions">
   <header>
-    <div class="mark"><b>Trailcraft</b><i>Scent engine &middot; 3D study</i><span class="sitenav"><a href="./">All demos</a><a href="lake.html?v=c12ddf08">The lake</a></span></div>
+    <div class="mark"><b>Trailcraft</b><i>Scent engine &middot; 3D study</i><span class="sitenav"><a href="./">All demos</a><a href="lake.html?v=d7e41b83">The lake</a></span></div>
     <div class="seg" id="units" role="group" aria-label="Units">
       <button type="button" data-u="metric" aria-pressed="true">&deg;C</button><button type="button" data-u="us" aria-pressed="false">&deg;F</button>
     </div>
@@ -296,8 +296,12 @@ select option { background: #0c1419; }
         <div class="ctl"><div class="row"><label for="sSet">Put down</label><output id="oSet"></output></div>
           <input type="range" id="sSet" min="0" max="300" step="5" value="300"></div>
       </div>
-      <div class="ctl" id="ageCtl" hidden><div class="row"><label for="sAge">Age of the trail</label><output id="oAge"></output></div>
-        <input type="range" id="sAge" min="0" max="240" step="5" value="30"></div>
+      <div id="ageCtl" hidden style="display:grid;gap:10px">
+        <div class="ctl"><div class="row"><label for="sAge">Age of the trail</label><output id="oAge"></output></div>
+          <input type="range" id="sAge" min="0" max="240" step="1" value="0"></div>
+        <div class="headrow"><label class="toggle"><input type="checkbox" id="lAge" checked> Let it age (a minute every second)</label>
+          <button type="button" class="chip" id="relay">Walk it again</button></div>
+      </div>
     </section>
 
     <section>
@@ -353,6 +357,7 @@ select option { background: #0c1419; }
         <li>The &ldquo;Search&rdquo; figures (how high the scent sits, how far it carries at nose height, how wide it is, and the spacing that follows) are counted from the parcels in this picture every second or so. They are this model&rsquo;s answer, not a field measurement, and they move as the wind gusts.</li>
         <li>A raised source and &ldquo;put down&rdquo;: scent leaves from the height you set and is shown only as far as it has had time to travel. How fast it then mixes down to the ground follows the same illustrative rules as the rest of the height. Plume theory agrees on the shape: from a raised source the strongest scent at ground level is some way downwind, not underneath.</li>
         <li>Gust strength is taken as 18% of the wind speed over land. That is a chosen figure; a measured peak gust of 1.4 times the mean over open grassland fits it. And the swings follow a smooth made-up rhythm, not a recorded wind.</li>
+        <li>A walked trail. Each footstep starts giving off scent as it is put down, and fades at the rate Trailcraft uses for how long scent stays workable. As it fades, the scent in the air is drawn shrinking back toward the footsteps, because a weaker source drops below a workable level closer in. That direction is sound; how fast it happens is illustrative. The footsteps are drawn larger than life so they can be seen, and brighter while they are fresh.</li>
         <li>How high scent climbs over warm ground, how fast it sinks over cold ground, how much of it runs sideways along a barrier, and the small-scale swirling. The app&rsquo;s model is flat; height is added here so the picture can show lift and pooling.</li>
         <li>Scent that lifts above nose height rides faster air, so the drawn plume can run longer than the nose-height distance quoted in the text.</li>
         <li>Scent is invisible. It is drawn here as glowing light, brighter where there is more of it. &ldquo;Smoke&rdquo; draws it as pale smoke lit by the sun and sky instead, because smoke is what trainers use to see how scent moves.</li>
@@ -1109,6 +1114,7 @@ attribute vec2 ref;
 uniform sampler2D uPos, uRand, uEmit, uTerr;
 uniform float uSession, uLife, uGain, uPx, uMix, uSize, uCap;
 uniform float uSet, uAirLife;   // seconds since the source was put down; seconds a parcel lives
+uniform float uShrink;          // 1 = an ageing trail's scent draws back toward the footsteps as it weakens
 varying vec3 vAcc;
 const float EXT = ${EXTENT.toFixed(1)};
 void main(){
@@ -1131,6 +1137,9 @@ void main(){
   /* Each parcel carries a fixed amount of scent: spread over a bigger disc it is thinner. */
   float a = str * fade * uGain * min((px * px) / (pxc * pxc), 1.0) / pow(size, 1.3);
   a *= 1.0 - smoothstep(uSet * 0.9, uSet, ph * uAirLife * (0.55 + 0.9 * r.y));        // scent older than the source itself cannot be there yet
+  /* A weaker source thins out below a workable level sooner, so less of each parcel's flight is drawn: old scent stays near the footsteps. */
+  float keep = mix(1.0, 0.12 + 0.88 * pow(fresh, 0.6), uShrink * step(-9000.0, e.z));
+  a *= 1.0 - smoothstep(keep - 0.12, keep, ph);
   vAcc = vec3(a, a * (1.0 - ph), a * smoothstep(3.0, 20.0, s.y));
   if (a < 1e-6) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
 }
@@ -1966,7 +1975,7 @@ function createWorld(canvas, opts = {}) {
   const scentGeo = refGeo(N, 1);
   const scentMat = new THREE.ShaderMaterial({ vertexShader: SCENT_VERT, fragmentShader: SCENT_FRAG, ...additive,
     uniforms: { uPos: scentSim.posU, uRand: { value: scentSim.rand }, uEmit: U.uEmit, uTerr: U.uTerr, uSession: U.uSession,
-      uLife: U.uLife, uGain: { value: 1 }, uPx: { value: 800 }, uMix: U.uMix, uSize: { value: 0.9 }, uCap: { value: 22 }, uSet: { value: 1e9 }, uAirLife: { value: AIRBORNE } } });
+      uLife: U.uLife, uGain: { value: 1 }, uPx: { value: 800 }, uMix: U.uMix, uSize: { value: 0.9 }, uCap: { value: 22 }, uSet: { value: 1e9 }, uAirLife: { value: AIRBORNE }, uShrink: { value: 0 } } });
   const scentPts = new THREE.Points(scentGeo, scentMat);
   scentPts.frustumCulled = false;
   /* Scent is drawn at half size into its own picture, behind the real ground and trees. */
@@ -2452,7 +2461,7 @@ const PRESETS = [
 ];
 
 const S = { units: 'metric', hour: 10.5, link: false, airT: 11, groundT: 11, wind: 4.2, from: 315, humidity: 80, rain: 0,
-  odour: 'person', source: 'hide', age: 30, view: 'hill', tour: true, preset: 'grey', labels: true, src: SRC.slice(), cloud: 0.9, style: 'glow', gust: 100, srcH: 0, setT: 300 };      // gust: % of the usual; srcH: m; setT: seconds since put down (300 = settled)
+  odour: 'person', source: 'hide', age: 30, view: 'hill', tour: true, preset: 'grey', labels: true, src: SRC.slice(), cloud: 0.9, style: 'glow', gust: 100, srcH: 0, setT: 300, ageRun: true };      // gust: % of the usual; srcH: m; setT: seconds since put down (300 = settled)
 
 let world;
 try { world = createWorld($('gl'), { obstacles: OBST }); }
@@ -2550,8 +2559,10 @@ function explain() {
   if (warm) why2.push('rising air carries it away');
   let last = `Workable for about ${fmtDur(life)} in this air` + (why2.length ? `: ${why2.slice(0, 2).join(', and ')}.` : '.');
   if (S.source === 'trail') {
-    const left = Math.exp(-S.age / life) * 100;
-    last += ` This trail is ${fmtDur(S.age)} old, so about ${left < 1 ? 'under 1' : Math.round(left)}% of its scent is left.`;
+    const fresh = Math.exp(-S.age / life), left = fresh * 100, reach = S.wind * NOSE * AIRBORNE / st.mix * (0.12 + 0.88 * Math.pow(fresh, 0.6));
+    if (lay.on) last += ' The trail is being walked now: each footstep starts giving off scent as it is put down.';
+    else last += ` This trail was walked ${S.age < 1 ? 'just now' : fmtDur(S.age) + ' ago'}, so about ${left < 1 ? 'under 1' : Math.round(left)}% of its scent is left. ` +
+      (left < 4 ? 'What remains lies on the footsteps themselves: a dog has to work step to step.' : `The part that drifts in the air goes first. What can still be worked lies within about ${fmtDist(Math.max(1, reach))} downwind of the footsteps, and closer as it ages.`) + tag('illus');
   }
   last += tag('model');
 
@@ -2623,7 +2634,7 @@ function render() {
   $('oWind').textContent = `${fmtSpeed(S.wind)} · ${windWord(S.wind)}`;
   $('oFrom').textContent = `${Math.round(S.from)}° ${compassS(S.from)}`;
   $('oHum').textContent = `${Math.round(S.humidity)}%`; $('oRain').textContent = S.rain > 0 ? fmtRain(S.rain) : 'none';
-  $('oAge').textContent = fmtDur(S.age);
+  $('oAge').textContent = lay.on ? 'being walked' : S.age < 1 ? 'just walked' : fmtDur(S.age); $('lAge').checked = S.ageRun;
   $('oGust').textContent = S.gust < 5 ? 'steady' : `${S.gust < 60 ? 'light' : S.gust < 125 ? 'usual' : 'strong'} · swings ±${Math.round(S.gust / 100 * swingAt(dT))}°`;
   $('oSrcH').textContent = S.srcH < 0.05 ? 'on the ground' : `${fmtH(S.srcH)} up`;
   $('oSet').textContent = S.setT >= 300 ? 'long ago' : `${fmtSec(S.setT)} ago`;
@@ -2658,12 +2669,57 @@ pin.userData.place(S.src[0], S.src[1]);
 /* a bead on the pin's stem shows how high the source sits */
 const hDot = new THREE.Mesh(new THREE.SphereGeometry(0.2, 14, 10), new THREE.MeshBasicMaterial({ color: 0xffd9a0 })); hDot.visible = false; pin.add(hDot);
 world.mats.scent.uniforms.uSize.value = 0.72;                  // finer parcels: the detail at a barrier is a few metres across
-const ribbon = world.makeRibbon(TRAIL2, { width: 0.95, lift: 0.45, color: 0xe9f1f5, dash: 4, gain: 0.55 });
+const ribbon = world.makeRibbon(TRAIL2, { width: 0.95, lift: 0.45, color: 0xe9f1f5, dash: 4, gain: 0.55 }); ribbon.visible = false;
+
+/* ── the walked trail: footsteps put down one by one, each giving off scent from the moment it lands ── */
+const TRAIL_LEN = TRAIL2.reduce((s, p, i) => i ? s + Math.hypot(p[0] - TRAIL2[i - 1][0], p[1] - TRAIL2[i - 1][1]) : 0, 0);
+const WALK_MIN = TRAIL_LEN / 1.3 / 60;                          // minutes it takes to walk it at 1.3 m/s
+const LAY_REAL = 9;                                            // seconds the walk takes on screen
+const lay = { on: false, t: 0 };
+const trailAt = (f) => { const k = clamp(f, 0, 1) * (TRAIL2.length - 1), a = Math.floor(k), b = Math.min(TRAIL2.length - 1, a + 1), t = k - a; return [TRAIL2[a][0] + (TRAIL2[b][0] - TRAIL2[a][0]) * t, TRAIL2[a][1] + (TRAIL2[b][1] - TRAIL2[a][1]) * t]; };
+const steps = (() => {
+  const n = Math.floor(TRAIL_LEN / 0.8), at = new Float32Array(n * 4), fs = new Float32Array(n * 2);
+  for (let i = 0; i < n; i++) {                                 // a print every 0.8 m, left and right in turn
+    const f = (i + 0.5) / n, p = trailAt(f), q = trailAt(f + 0.004), dx = q[0] - p[0], dz = q[1] - p[1], l = Math.hypot(dx, dz) || 1, side = i % 2 ? 1 : -1;
+    at.set([p[0] - HALF - dz / l * 0.16 * side, 0, p[1] - HALF + dx / l * 0.16 * side, Math.atan2(dx, dz)], i * 4); fs.set([f, side], i * 2);
+  }
+  const g = new THREE.InstancedBufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array([-0.5, 0, -0.5, 0.5, 0, -0.5, 0.5, 0, 0.5, -0.5, 0, 0.5]), 3));
+  g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]), 2)); g.setIndex([0, 2, 1, 0, 3, 2]);
+  g.setAttribute('aAt', new THREE.InstancedBufferAttribute(at, 4)); g.setAttribute('aF', new THREE.InstancedBufferAttribute(fs, 2)); g.instanceCount = n;
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.CustomBlending, blendEquation: THREE.AddEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor,
+    uniforms: { uTerr: world.U.uTerr, uSession: world.U.uSession, uLife: world.U.uLife, uWalk: { value: WALK_MIN } },
+    vertexShader: `attribute vec4 aAt; attribute vec2 aF; uniform sampler2D uTerr; uniform float uSession, uLife, uWalk; varying vec2 vUv; varying float vFresh;
+void main(){
+  float born = aF.x * uWalk, age = uSession - born;
+  vFresh = age < 0.0 ? -1.0 : exp(-age / uLife);
+  float sc = clamp(distance(cameraPosition, vec3(aAt.x, 0.0, aAt.z)) * 0.020, 1.0, 4.5);      // drawn larger from far off, or they would vanish
+  vec2 q = vec2(position.x * 0.30 * aF.y, position.z * 0.62) * sc; float c = cos(aAt.w), s = sin(aAt.w);
+  vec2 w = aAt.xz + vec2(q.x * c + q.y * s, -q.x * s + q.y * c);
+  float y = texture2D(uTerr, w / ${EXTENT.toFixed(1)} + 0.5).r + 0.42;
+  vUv = uv; gl_Position = vFresh < 0.0 ? vec4(2.0, 2.0, 2.0, 1.0) : projectionMatrix * viewMatrix * vec4(w.x, y, w.y, 1.0);
+}`,
+    fragmentShader: `precision highp float; varying vec2 vUv; varying float vFresh;
+void main(){
+  vec2 p = vUv * 2.0 - 1.0;
+  float sole = 1.0 - smoothstep(0.80, 1.0, length((p - vec2(0.06, 0.30)) / vec2(0.80, 0.66))), heel = 1.0 - smoothstep(0.78, 1.0, length((p - vec2(-0.04, -0.66)) / vec2(0.56, 0.32)));
+  float a = max(sole, heel); if (a < 0.02) discard;
+  /* fresh steps glow the colour of the scent; old ones cool to a faint grey mark */
+  vec3 col = mix(vec3(0.20, 0.24, 0.28), vec3(1.9, 0.95, 0.30), smoothstep(0.03, 0.85, vFresh));
+  gl_FragColor = vec4(col * a, 1.0);
+}` });
+  const m = new THREE.Mesh(g, mat); m.frustumCulled = false; m.renderOrder = 3; m.visible = false; world.scene.add(m);
+  return m;
+})();
+/* whoever is laying the trail, drawn as a plain upright mark */
+const walker = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 1.75, 10), new THREE.MeshBasicMaterial({ color: 0xe9f1f5, transparent: true, opacity: 0.85 })); walker.visible = false; world.scene.add(walker);
+function startLaying() { lay.on = true; lay.t = 0; S.age = 0; world.session = 0; }
 function applySource() {
   if (S.source === 'hide') world.setPoint(S.src[0], S.src[1], 1.0);
-  else world.setTrail(TRAIL2, f => -(S.age + 6 * (1 - f)), 0.9);
-  world.session = 0;
-  pin.visible = S.source === 'hide'; ribbon.visible = S.source === 'trail';
+  else { world.setTrail(TRAIL2, f => f * WALK_MIN, 0.9); startLaying(); }
+  if (S.source === 'hide') { world.session = 0; lay.on = false; walker.visible = false; }
+  world.mats.scent.uniforms.uShrink.value = S.source === 'trail' ? 1 : 0;
+  pin.visible = S.source === 'hide'; steps.visible = S.source === 'trail';
   LABELS[0].el.textContent = S.source === 'hide' ? 'Source' : 'Trail';
 }
 
@@ -2768,7 +2824,9 @@ bind('sAir', 'airT', () => { if (S.link) S.groundT = clamp(Math.round((S.airT + 
 bind('sGround', 'groundT', () => { S.link = false; });
 bind('sWind', 'wind'); bind('sFrom', 'from', () => { if (S.view === 'low') applyView(false); });
 bind('sHum', 'humidity'); bind('sRain', 'rain');
-bind('sAge', 'age', () => applySource());
+$('sAge').addEventListener('input', e => { S.age = +e.target.value; S.ageRun = false; lay.on = false; walker.visible = false; userTouched(); render(); });
+$('lAge').addEventListener('change', e => { S.ageRun = e.target.checked; });
+$('relay').addEventListener('click', () => { userTouched(); S.ageRun = $('lAge').checked; startLaying(); render(); });
 bind('sGust', 'gust'); bind('sSrcH', 'srcH'); bind('sSet', 'setT');
 $('link').addEventListener('change', e => { S.link = e.target.checked; userTouched(); if (S.link) { S.groundT = clamp(Math.round((S.airT + groundOffsetAt(S.hour)) * 2) / 2, -14, 56); S.preset = ''; } render(); });
 $('tour').addEventListener('change', e => { S.tour = e.target.checked; tourClock = 0; render(); });
@@ -2805,7 +2863,17 @@ world.onFrame = (dt) => {
   c.hour = lerp(c.hour, S.hour, 1 - Math.exp(-dt * 1.6)); c.cloud = lerp(c.cloud, S.cloud, 1 - Math.exp(-dt * 1.2));
   c.gust = S.gust / 100;
   if (world.windNow) $('roseArrow').setAttribute('transform', `rotate(${world.windNow.from + 180})`);      // the needle shows the wind of this moment
-  planClock += dt; if (planClock > 1.1) { planClock = 0; $('xPlan').innerHTML = planText(); }
+  planClock += dt; if (planClock > 1.1) { planClock = 0; $('xPlan').innerHTML = planText(); if (S.source === 'trail') render(); }
+  if (S.source === 'trail') {
+    if (lay.on) {                                               // the walk: the clock runs from the first step to the last
+      lay.t += dt; const f = Math.min(1, lay.t / LAY_REAL), p = trailAt(f);
+      world.session = f * WALK_MIN; walker.visible = true; walker.position.set(p[0] - HALF, groundAt(p[0], p[1]) + 0.9, p[1] - HALF);
+      if (f >= 1) { lay.on = false; walker.visible = false; S.age = 0; render(); }
+    } else {
+      if (S.ageRun && S.age < 240) { S.age = Math.min(240, S.age + dt); $('sAge').value = S.age; $('oAge').textContent = S.age < 1 ? 'just walked' : fmtDur(S.age); }
+      world.session = WALK_MIN + S.age;
+    }
+  }
   pin.userData.ring2.scale.setScalar(1 + 0.12 * Math.sin(world.time * 2.2));
   if (S.tour) {
     tourClock += dt;
@@ -2822,7 +2890,7 @@ applyView(true);
 render();
 world.prewarm(120);
 world.start();
-window.__world = world; window.__S = S;
+window.__world = world; window.__S = S; window.__trailAt = trailAt;
 window.__pinAt = () => { const r = $('gl').getBoundingClientRect(), p = world.project(S.src[0] - HALF, groundAt(S.src[0], S.src[1]) + 1, S.src[1] - HALF); return [r.left + p.x, r.top + p.y]; };
 { const qp = new URLSearchParams(location.search); if (qp.get('preset')) { S.tour = false; if (qp.get('view')) S.view = qp.get('view'); if (qp.get('odour')) S.odour = qp.get('odour'); if (qp.get('style')) { S.style = qp.get('style'); applyStyle(); } if (qp.get('source')) { S.source = qp.get('source'); applySource(); } setPreset(qp.get('preset'), true); if (qp.get('at')) { putAt(qp.get('at')); S.tour = false; } applyView(true); Object.assign(world.cond, { airT: S.airT, groundT: S.groundT, wind: S.wind, from: S.from, hour: S.hour }); world.prewarm(160); } }
 /* For checking a look from the console: jump to a day, let the air settle, hold still. */

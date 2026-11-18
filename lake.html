@@ -238,7 +238,7 @@ select option { background: #0c1419; }
 
 <aside id="panel" class="glass" aria-label="Conditions">
   <header>
-    <div class="mark"><b>Trailcraft</b><i>Scent lake &middot; water search</i><span class="sitenav"><a href="./">All demos</a><a href="field.html?v=c12ddf08">The field</a></span></div>
+    <div class="mark"><b>Trailcraft</b><i>Scent lake &middot; water search</i><span class="sitenav"><a href="./">All demos</a><a href="field.html?v=d7e41b83">The field</a></span></div>
     <div class="seg" id="units" role="group" aria-label="Units">
       <button type="button" data-u="metric" aria-pressed="true">&deg;C &middot; m</button><button type="button" data-u="us" aria-pressed="false">&deg;F &middot; ft</button>
     </div>
@@ -1217,6 +1217,7 @@ attribute vec2 ref;
 uniform sampler2D uPos, uRand, uEmit, uTerr;
 uniform float uSession, uLife, uGain, uPx, uMix, uSize, uCap;
 uniform float uSet, uAirLife;   // seconds since the source was put down; seconds a parcel lives
+uniform float uShrink;          // 1 = an ageing trail's scent draws back toward the footsteps as it weakens
 varying vec3 vAcc;
 const float EXT = ${EXTENT.toFixed(1)};
 void main(){
@@ -1239,6 +1240,9 @@ void main(){
   /* Each parcel carries a fixed amount of scent: spread over a bigger disc it is thinner. */
   float a = str * fade * uGain * min((px * px) / (pxc * pxc), 1.0) / pow(size, 1.3);
   a *= 1.0 - smoothstep(uSet * 0.9, uSet, ph * uAirLife * (0.55 + 0.9 * r.y));        // scent older than the source itself cannot be there yet
+  /* A weaker source thins out below a workable level sooner, so less of each parcel's flight is drawn: old scent stays near the footsteps. */
+  float keep = mix(1.0, 0.12 + 0.88 * pow(fresh, 0.6), uShrink * step(-9000.0, e.z));
+  a *= 1.0 - smoothstep(keep - 0.12, keep, ph);
   vAcc = vec3(a, a * (1.0 - ph), a * smoothstep(3.0, 20.0, s.y));
   if (a < 1e-6) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
 }
@@ -2074,7 +2078,7 @@ function createWorld(canvas, opts = {}) {
   const scentGeo = refGeo(N, 1);
   const scentMat = new THREE.ShaderMaterial({ vertexShader: SCENT_VERT, fragmentShader: SCENT_FRAG, ...additive,
     uniforms: { uPos: scentSim.posU, uRand: { value: scentSim.rand }, uEmit: U.uEmit, uTerr: U.uTerr, uSession: U.uSession,
-      uLife: U.uLife, uGain: { value: 1 }, uPx: { value: 800 }, uMix: U.uMix, uSize: { value: 0.9 }, uCap: { value: 22 }, uSet: { value: 1e9 }, uAirLife: { value: AIRBORNE } } });
+      uLife: U.uLife, uGain: { value: 1 }, uPx: { value: 800 }, uMix: U.uMix, uSize: { value: 0.9 }, uCap: { value: 22 }, uSet: { value: 1e9 }, uAirLife: { value: AIRBORNE }, uShrink: { value: 0 } } });
   const scentPts = new THREE.Points(scentGeo, scentMat);
   scentPts.frustumCulled = false;
   /* Scent is drawn at half size into its own picture, behind the real ground and trees. */
