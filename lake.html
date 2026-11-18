@@ -327,7 +327,7 @@ select option { background: #0c1419; }
       <p class="note">Double-click (or double-tap) the water to send the boat there yourself.</p>
       <div class="headrow"><span class="eyebrow">Scent drawn as</span>
         <div class="seg" id="style" role="group" aria-label="How the scent is drawn">
-          <button type="button" data-y="smoke" aria-pressed="true">Smoke</button><button type="button" data-y="glow">Glow</button>
+          <button type="button" data-y="glow" aria-pressed="true">Glow</button><button type="button" data-y="smoke">Smoke</button>
         </div></div>
       <div class="headrow">
         <label class="toggle"><input type="checkbox" id="lFilm" checked> Show the film</label>
@@ -374,7 +374,7 @@ select option { background: #0c1419; }
         <li>How long a patch of film keeps giving off scent (about 10 minutes in a light breeze, less when it is warm or windy).</li>
         <li>The boat&rsquo;s search is a simple script: sweep across the wind, turn into the scent when the dog&rsquo;s nose meets enough of it, follow the stronger side, stop where it runs out. Real dogs and handlers do far more. The only field figures found are handler reports that dogs can place a body to within about a metre in water up to about 15 m deep, and that a high-sided boat keeps the dog from the water.</li>
         <li>Time runs 12 times faster than real, or you would wait minutes for a droplet to rise. The boat is drawn at walking pace so it can be followed.</li>
-        <li>Scent is invisible. Under water it is drawn as white bubbles, amber droplets and a pale haze. In the air it is drawn as smoke. The film is drawn stronger than you would see it.</li>
+        <li>Scent is invisible. Under water it is drawn as white bubbles, amber droplets and a pale haze. In the air it is drawn as glowing light, brighter where there is more of it; &ldquo;Smoke&rdquo; draws it as pale smoke instead. The film is drawn stronger than you would see it.</li>
         <li>The lake is invented. The trees, bushes, grass, stones, shoreline and lake bed are real scans and photographs from Poly Haven (free, public domain). The boat, handler and dog are a 3D model made for this page with an AI tool, not a scan of a real boat.</li>
       </ul></div>
     <button class="chip close" id="honestClose" type="button">Close</button>
@@ -2680,7 +2680,7 @@ const PRESETS = [
   { id: 'flow', name: 'Moving water', hour: 16, depth: 6, surfT: 16, deepT: 15, cline: 4, airT: 17, wind: 1.5, from: 200, cur: 25, curTo: 80, cloud: 0.5, stage: 'sunk' },
 ];
 /* cur is in cm/s here, as on the slider. */
-const S = { units: 'metric', ...PRESETS[0], preset: 'summer', tour: true, view: 'shore', labels: true, film: true, style: 'smoke',
+const S = { units: 'metric', ...PRESETS[0], preset: 'summer', tour: true, view: 'shore', labels: true, film: true, style: 'glow',
   src: [0.47 * EXTENT, 0.50 * EXTENT] };
 
 /* ── the world ───────────────────────────────────────────────────── */
@@ -3386,7 +3386,7 @@ for (const id of ['sWind', 'sFrom', 'sCur', 'sCurTo', 'sDepth']) $(id).addEventL
 $('tour').addEventListener('change', e => { S.tour = e.target.checked; tourClock = 0; });
 $('units').addEventListener('click', e => { const u = e.target.dataset.u; if (u) { S.units = u; render(); } });
 $('view').addEventListener('click', e => { const v = e.target.dataset.v; if (v) { S.view = v; stopTour(); applyView(false); render(); } });
-function applyStyle() { world.scentStyle = S.style; }
+function applyStyle() { world.scentStyle = S.style; world.mats.scent.uniforms.uSize.value = S.style === 'glow' ? 0.72 : 0.95; }      // light is drawn a little tighter than smoke, as on the field page
 $('style').addEventListener('click', e => { const y = e.target.dataset.y; if (y) { S.style = y; applyStyle(); render(); } });
 $('lFilm').addEventListener('change', e => { S.film = e.target.checked; });
 $('lWind').addEventListener('change', e => { world.layers.wind = e.target.checked; });

@@ -294,7 +294,7 @@ select option { background: #0c1419; }
     <section>
       <div class="headrow"><span class="eyebrow">Scent drawn as</span>
         <div class="seg" id="style" role="group" aria-label="How the scent is drawn">
-          <button type="button" data-y="smoke" aria-pressed="true">Smoke</button><button type="button" data-y="glow">Glow</button>
+          <button type="button" data-y="glow" aria-pressed="true">Glow</button><button type="button" data-y="smoke">Smoke</button>
         </div></div>
       <div class="headrow"><span class="eyebrow">Look from</span>
         <div class="seg" id="view" role="group" aria-label="Camera">
@@ -342,7 +342,7 @@ select option { background: #0c1419; }
       <ul>
         <li>How high scent climbs over warm ground, how fast it sinks over cold ground, how much of it runs sideways along a barrier, and the small-scale swirling. The app&rsquo;s model is flat; height is added here so the picture can show lift and pooling.</li>
         <li>Scent that lifts above nose height rides faster air, so the drawn plume can run longer than the nose-height distance quoted in the text.</li>
-        <li>Scent is invisible. It is drawn here as pale smoke, lit by the sun and sky, because smoke is what trainers use to see how scent moves. &ldquo;Glow&rdquo; draws it as light instead.</li>
+        <li>Scent is invisible. It is drawn here as glowing light, brighter where there is more of it. &ldquo;Smoke&rdquo; draws it as pale smoke lit by the sun and sky instead, because smoke is what trainers use to see how scent moves.</li>
         <li>Brightness follows the amount of vapour on a compressed scale. One odour is not drawn brighter than another, because no reliable detection threshold for dogs has been published for these compounds.</li>
         <li>The sun&rsquo;s effect on ground temperature follows a typical clear day. Real days differ with cloud, wind and surface.</li>
         <li>The hillside is invented. It is the same ground as the current Trailcraft engine screen. The trees, bushes and grass tufts are real plants scanned by Poly Haven (free, public-domain scans), photographed in Blender from every side for this page. The ground and the wall are photographs from the same library. They are real plants and stone, arranged on an invented hill. The trees are small field trees, about 6 m.</li>
@@ -2364,7 +2364,7 @@ const PRESETS = [
 ];
 
 const S = { units: 'metric', hour: 10.5, link: false, airT: 11, groundT: 11, wind: 4.2, from: 315, humidity: 80, rain: 0,
-  odour: 'person', source: 'hide', age: 30, view: 'hill', tour: true, preset: 'grey', labels: true, src: SRC.slice(), cloud: 0.9, style: 'smoke' };
+  odour: 'person', source: 'hide', age: 30, view: 'hill', tour: true, preset: 'grey', labels: true, src: SRC.slice(), cloud: 0.9, style: 'glow' };
 
 let world;
 try { world = createWorld($('gl'), { obstacles: OBST }); }
@@ -2661,7 +2661,7 @@ $('lWind').addEventListener('change', e => { world.layers.wind = e.target.checke
 $('lStain').addEventListener('change', e => { world.layers.stain = e.target.checked; });
 $('lLabels').addEventListener('change', e => { S.labels = e.target.checked; });
 $('lLines').addEventListener('change', e => { world.layers.lines = e.target.checked; });
-/* Smoke is the plain view. Glow brings back the light, with the ground map and wind lines that go with it. */
+/* Glow is what the page opens in: scent as light, with the ground map and wind lines that go with it. Smoke is the plain view. */
 function applyStyle() {
   const glow = S.style === 'glow';
   world.scentStyle = S.style; world.layers.stain = glow; world.layers.wind = glow; world.layers.lines = glow;
