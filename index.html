@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Scent Engine: 3D studies</title>
+<meta name="description" content="Two 3D studies of how scent moves: over a hillside, and up through a lake to a search dog on a boat. Change the conditions and watch it respond.">
+<meta name="theme-color" content="#070c10">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Scent Engine: 3D studies">
+<meta property="og:description" content="How scent moves over a hillside, and up through a lake to a search dog on a boat. Change the conditions and watch it respond.">
+<meta property="og:image" content="https://sydrouxba5.github.io/scent-engine-3d/img/lake.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root { color-scheme: dark; --ink: #070c10; --panel: #0c1419; --line: rgba(190, 220, 235, 0.13); --line-2: rgba(190, 220, 235, 0.26); --fg: #e8f0f3; --dim: #9bafb9; --faint: #667b86; --ember: #ffb454;
+  --display: 'Fraunces', 'Iowan Old Style', Georgia, serif; --body: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --gut: max(20px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--ink); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+main { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 6vw, 72px) var(--gut) 48px; }
+.mark { font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); }
+.mark b { color: var(--fg); font-weight: 600; }
+h1 { font-family: var(--display); font-weight: 500; font-size: clamp(34px, 6.4vw, 60px); line-height: 1.06; letter-spacing: -0.015em; margin: 18px 0 14px; text-wrap: balance; }
+.lede { color: #c9d6dc; font-size: clamp(16px, 2.1vw, 19px); max-width: 60ch; margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 22px; margin: clamp(28px, 5vw, 48px) 0 0; }
+.card { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; color: inherit; text-decoration: none; transition: border-color .2s, transform .2s; }
+.card:hover, .card:focus-visible { border-color: var(--line-2); transform: translateY(-2px); }
+.card:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+.card img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; background: #0a1014; }
+.card div { padding: 18px 20px 20px; display: grid; gap: 8px; }
+.card span { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+.card h2 { font-family: var(--display); font-weight: 500; font-size: 26px; line-height: 1.15; margin: 0; }
+.card p { margin: 0; color: #c2cfd5; font-size: 15px; }
+.card em { font-style: normal; justify-self: start; margin-top: 6px; padding: 9px 16px; border-radius: 999px; background: var(--ember); color: #1a1206; font-weight: 600; font-size: 14px; }
+.notes { margin: clamp(28px, 5vw, 44px) 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; gap: 8px; color: var(--dim); font-size: 14px; max-width: 72ch; }
+.notes p { margin: 0; }
+.notes a { color: var(--fg); text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark"><b>Trailcraft</b> &middot; scent studies</div>
+  <h1>See where the scent goes.</h1>
+  <p class="lede">Two 3D studies of how scent moves. Change the temperature, the wind or the water, and watch the scent respond. Each one explains in plain words what it is doing and why.</p>
+
+  <div class="grid">
+    <a class="card" href="field.html">
+      <img src="img/field.jpg" width="1400" height="875" alt="A grassy hillside in 3D with pale scent drifting from a source past a hedge and a stone wall.">
+      <div>
+        <span>Study 1 &middot; on land</span>
+        <h2>The field</h2>
+        <p>A hillside with a stone wall, a hedge and a stand of trees. Set the ground and air temperature, the wind and the time of day. Move the source and see scent pool, lift, and find its way round what stands in front of it.</p>
+        <em>Open the field</em>
+      </div>
+    </a>
+    <a class="card" href="lake.html">
+      <img src="img/lake.jpg" width="1400" height="875" alt="A lake in 3D with scent lying low on the water and a small search boat with a dog on the bow.">
+      <div>
+        <span>Study 2 &middot; on water</span>
+        <h2>The lake</h2>
+        <p>Human-remains scent from a source under water. Set the depth, the water temperature, the current and the wind. Watch bubbles and droplets rise, the film drift on the surface, and a dog on a search boat work out where it comes up.</p>
+        <em>Open the lake</em>
+      </div>
+    </a>
+  </div>
+
+  <div class="notes">
+    <p>Works on a computer and on a phone. It draws a few hundred thousand moving particles, so a recent device gives the smoothest picture.</p>
+    <p>These are illustrations, not forecasts. Each study has a sheet that says which numbers are measured, which are published rules, and which are only there to make the picture readable.</p>
+    <p>Trees, grass, stones and ground are scans and photographs from <a href="https://polyhaven.com" rel="noopener">Poly Haven</a> (public domain). Drawn with <a href="https://threejs.org" rel="noopener">three.js</a>.</p>
+  </div>
+</main>
+</body>
+</html>
