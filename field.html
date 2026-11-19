@@ -224,7 +224,7 @@ select option { background: #0c1419; }
 
 <aside id="panel" class="glass" aria-label="Conditions">
   <header>
-    <div class="mark"><b>Trailcraft</b><i>Scent engine &middot; 3D study</i><span class="sitenav"><a href="./">All demos</a><a href="lake.html?v=d7e41b83">The lake</a></span></div>
+    <div class="mark"><b>Trailcraft</b><i>Scent engine &middot; 3D study</i><span class="sitenav"><a href="./">All demos</a><a href="lake.html?v=2ffeadbe">The lake</a></span></div>
     <div class="seg" id="units" role="group" aria-label="Units">
       <button type="button" data-u="metric" aria-pressed="true">&deg;C</button><button type="button" data-u="us" aria-pressed="false">&deg;F</button>
     </div>
@@ -1668,7 +1668,9 @@ function createWorld(canvas, opts = {}) {
   const q = new URLSearchParams(location.search);
   /* A phone or tablet gets a lighter load to start from: fewer parcels, less grass, a smaller shadow picture. */
   const handheld = !!window.matchMedia && (matchMedia('(pointer: coarse)').matches || matchMedia('(max-width: 820px)').matches);
-  const N = +(q.get('n') || opts.particles || (handheld ? 384 : 512));          // N×N scent parcels
+  /* Numbers from the web address are for testing; each is held inside the range the page can draw, so a made-up link cannot ask for the impossible. */
+  const held = (v, lo, hi, d) => { const n = Math.round(+v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
+  const N = held(q.get('n') || opts.particles || (handheld ? 384 : 512), 64, 512, 512);          // N×N scent parcels
   const NW = opts.windLines || 52;                          // NW×NW wind streaks
   const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1895,7 +1897,7 @@ function createWorld(canvas, opts = {}) {
   }
 
   /* ── grass clumps round the point being looked at ────────────────── */
-  const GRASS_N = +(q.get('grass') || (handheld ? 30000 : 64000)), GRASS_TILE = 80;
+  const GRASS_N = held(q.get('grass') || (handheld ? 30000 : 64000), 1, 64000, 64000), GRASS_TILE = 80;
   const grassU = { uTerr: U.uTerr, uCentre: { value: new THREE.Vector3() }, uWind: U.uWind, uTile: { value: GRASS_TILE }, uClock: U.uClock, uSunDir: U.uSunDir,
     uTuft: { value: ASSETS.card_grass }, uGrassTint: { value: new THREE.Vector3(0.33, 0.36, 0.22) }, uSunCol: U.uSunCol, uAmbient: U.uAmbient, uFogCol: U.uFogCol, uFogD: U.uFogD,
     uShadowMap: U.uShadowMap, uShadowMatrix: U.uShadowMatrix, uShadowOn: U.uShadowOn, ...XU };
@@ -2129,7 +2131,7 @@ void main(){
   };
 
   /* ── glow and grade ──────────────────────────────────────────────── */
-  const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: +(q.get('aa') || 0) }));
+  const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: held(q.get('aa') || 0, 0, 4, 0) }));
   composer.addPass(new RenderPass(scene, camera));
   const scentPass = new ShaderPass(SCENT_COMPOSE);
   scentPass.uniforms.tScent.value = scentRT.texture; scentPass.uniforms.uPxl.value = new THREE.Vector2(1, 1);
@@ -2145,7 +2147,7 @@ void main(){
 
   /* ── size ────────────────────────────────────────────────────────── */
   let W = 0, H = 0;
-  const forcedDpr = +q.get('dpr') || 0;
+  const forcedDpr = Math.min(2, Math.max(0, +q.get('dpr') || 0));
   world.dpr = forcedDpr || Math.min(window.devicePixelRatio || 1, 1.4);
   function resize(force) {
     const w = Math.max(2, canvas.clientWidth), h = Math.max(2, canvas.clientHeight);
@@ -2892,7 +2894,11 @@ world.prewarm(120);
 world.start();
 window.__world = world; window.__S = S; window.__trailAt = trailAt;
 window.__pinAt = () => { const r = $('gl').getBoundingClientRect(), p = world.project(S.src[0] - HALF, groundAt(S.src[0], S.src[1]) + 1, S.src[1] - HALF); return [r.left + p.x, r.top + p.y]; };
-{ const qp = new URLSearchParams(location.search); if (qp.get('preset')) { S.tour = false; if (qp.get('view')) S.view = qp.get('view'); if (qp.get('odour')) S.odour = qp.get('odour'); if (qp.get('style')) { S.style = qp.get('style'); applyStyle(); } if (qp.get('source')) { S.source = qp.get('source'); applySource(); } setPreset(qp.get('preset'), true); if (qp.get('at')) { putAt(qp.get('at')); S.tour = false; } applyView(true); Object.assign(world.cond, { airT: S.airT, groundT: S.groundT, wind: S.wind, from: S.from, hour: S.hour }); world.prewarm(160); } }
+/* A web address is something anyone can make up. Each value in it is taken only if it is one of the values the page
+   itself offers; anything else is ignored, so a mangled link opens the ordinary page instead of a broken one. */
+{ const qp = new URLSearchParams(location.search), pick = (k, ok) => { const v = qp.get(k); return v != null && ok.includes(v) ? v : null; };
+  const pre = pick('preset', PRESETS.map(p => p.id)), view = pick('view', ['hill', 'low', 'map']), odour = pick('odour', ODOURS.map(o => o.id)), style = pick('style', ['glow', 'smoke']), source = pick('source', ['hide', 'trail']), at = pick('at', ['wall', 'hedge', 'trees', 'open']);
+  if (pre) { S.tour = false; if (view) S.view = view; if (odour) S.odour = odour; if (style) { S.style = style; applyStyle(); } if (source) { S.source = source; applySource(); } setPreset(pre, true); if (at) { putAt(at); S.tour = false; } applyView(true); Object.assign(world.cond, { airT: S.airT, groundT: S.groundT, wind: S.wind, from: S.from, hour: S.hour }); world.prewarm(160); } }
 /* For checking a look from the console: jump to a day, let the air settle, hold still. */
 window.__show = (id, view, frames = 420) => {
   S.tour = false; if (view) { S.view = view; }

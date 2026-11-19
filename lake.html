@@ -238,7 +238,7 @@ select option { background: #0c1419; }
 
 <aside id="panel" class="glass" aria-label="Conditions">
   <header>
-    <div class="mark"><b>Trailcraft</b><i>Scent lake &middot; water search</i><span class="sitenav"><a href="./">All demos</a><a href="field.html?v=d7e41b83">The field</a></span></div>
+    <div class="mark"><b>Trailcraft</b><i>Scent lake &middot; water search</i><span class="sitenav"><a href="./">All demos</a><a href="field.html?v=2ffeadbe">The field</a></span></div>
     <div class="seg" id="units" role="group" aria-label="Units">
       <button type="button" data-u="metric" aria-pressed="true">&deg;C &middot; m</button><button type="button" data-u="us" aria-pressed="false">&deg;F &middot; ft</button>
     </div>
@@ -1771,7 +1771,9 @@ function createWorld(canvas, opts = {}) {
   const q = new URLSearchParams(location.search);
   /* A phone or tablet gets a lighter load to start from: fewer parcels, less grass, a smaller shadow picture. */
   const handheld = !!window.matchMedia && (matchMedia('(pointer: coarse)').matches || matchMedia('(max-width: 820px)').matches);
-  const N = +(q.get('n') || opts.particles || (handheld ? 384 : 512));          // N×N scent parcels
+  /* Numbers from the web address are for testing; each is held inside the range the page can draw, so a made-up link cannot ask for the impossible. */
+  const held = (v, lo, hi, d) => { const n = Math.round(+v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
+  const N = held(q.get('n') || opts.particles || (handheld ? 384 : 512), 64, 512, 512);          // N×N scent parcels
   const NW = opts.windLines || 52;                          // NW×NW wind streaks
   const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1998,7 +2000,7 @@ function createWorld(canvas, opts = {}) {
   }
 
   /* ── grass clumps round the point being looked at ────────────────── */
-  const GRASS_N = +(q.get('grass') || (handheld ? 30000 : 64000)), GRASS_TILE = 80;
+  const GRASS_N = held(q.get('grass') || (handheld ? 30000 : 64000), 1, 64000, 64000), GRASS_TILE = 80;
   const grassU = { uTerr: U.uTerr, uCentre: { value: new THREE.Vector3() }, uWind: U.uWind, uTile: { value: GRASS_TILE }, uClock: U.uClock, uSunDir: U.uSunDir,
     uTuft: { value: ASSETS.card_grass }, uGrassTint: { value: new THREE.Vector3(0.33, 0.36, 0.22) }, uSunCol: U.uSunCol, uAmbient: U.uAmbient, uFogCol: U.uFogCol, uFogD: U.uFogD,
     uShadowMap: U.uShadowMap, uShadowMatrix: U.uShadowMatrix, uShadowOn: U.uShadowOn, ...XU };
@@ -2232,7 +2234,7 @@ void main(){
   };
 
   /* ── glow and grade ──────────────────────────────────────────────── */
-  const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: +(q.get('aa') || 0) }));
+  const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: held(q.get('aa') || 0, 0, 4, 0) }));
   composer.addPass(new RenderPass(scene, camera));
   const scentPass = new ShaderPass(SCENT_COMPOSE);
   scentPass.uniforms.tScent.value = scentRT.texture; scentPass.uniforms.uPxl.value = new THREE.Vector2(1, 1);
@@ -2248,7 +2250,7 @@ void main(){
 
   /* ── size ────────────────────────────────────────────────────────── */
   let W = 0, H = 0;
-  const forcedDpr = +q.get('dpr') || 0;
+  const forcedDpr = Math.min(2, Math.max(0, +q.get('dpr') || 0));
   world.dpr = forcedDpr || Math.min(window.devicePixelRatio || 1, 1.4);
   function resize(force) {
     const w = Math.max(2, canvas.clientWidth), h = Math.max(2, canvas.clientHeight);
@@ -3591,8 +3593,9 @@ function uiFrame(dt) {
 { const qp = new URLSearchParams(location.search);
   if (qp.get('preset') && PRESETS.some(p => p.id === qp.get('preset'))) { Object.assign(S, PRESETS.find(p => p.id === qp.get('preset')), { preset: qp.get('preset'), tour: false }); delete S.id; delete S.name; }
   if (qp.get('stage') && STAGES.some(s => s.id === qp.get('stage'))) { S.stage = qp.get('stage'); S.tour = false; }
-  if (qp.get('view')) { S.view = qp.get('view'); S.tour = false; }
-  if (qp.get('style')) S.style = qp.get('style'); }
+  /* only values the page itself offers: a made-up one is ignored */
+  if (['shore', 'under', 'boat', 'map'].includes(qp.get('view'))) { S.view = qp.get('view'); S.tour = false; }
+  if (['glow', 'smoke'].includes(qp.get('style'))) S.style = qp.get('style'); }
 Object.assign(world.cond, { wind: S.wind, from: S.from, airT: S.airT, groundT: S.surfT, humidity: 82, rain: 0, hour: S.hour, cloud: S.cloud });
 if (S.depth !== LAKE.depth) rebuildLake();
 syncModel(false); model.settle(); placeSource(); startSearch(); applyStyle();
